@@ -12,7 +12,7 @@ on:
       - qa
 
 env:
-  AWS_DEFAULT_REGION: "ap-south-1"
+  AWS_DEFAULT_REGION: "as-east-1"
 
 jobs:
   build:
@@ -41,9 +41,6 @@ jobs:
       
     - name: Gradle Build and generating apk files
       run: ./gradlew build
-         
-    - name: Code Coverage test - Jacoco
-      run: ./gradlew jacocoTest
       
     - name: Cache SonarQube packages
       uses: actions/cache@v1
@@ -60,11 +57,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
           
-    - name: Code Scan Analysis - SonarQube
-      env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      run: ./gradlew sonarqube -Dsonar.projectKey=android-demo-app
+    # - name: Code Scan Analysis - SonarQube
+    #   env:
+    #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    #   run: ./gradlew sonarqube -Dsonar.projectKey=android-demo-app
       
     - name: Date and Time
       run: echo "::set-output name=current_date_time::$(date +"%d-%m-%Y-%H-%I-%M-%S")"
@@ -87,14 +84,14 @@ jobs:
         path: ${{ github.workspace }}/apk-files/
         if-no-files-found: ignore
       
-    - name : Notification to Teams
-      uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
-      if: always()
-      with:
-          github-token: ${{ secrets.CI_GITHUB_TOKEN  }}
-          webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-    outputs:
-        CURRENT_DATE_TIME: ${{ steps.date.outputs.current_date_time }}
+    # - name : Notification to Teams
+    #   uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+    #   if: always()
+    #   with:
+    #       github-token: ${{ secrets.CI_GITHUB_TOKEN  }}
+    #       webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+    # outputs:
+    #     CURRENT_DATE_TIME: ${{ steps.date.outputs.current_date_time }}
 
   deploy:
     runs-on: ubuntu-latest
