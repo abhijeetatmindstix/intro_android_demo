@@ -12,7 +12,7 @@ on:
       - qa
 
 env:
-  AWS_DEFAULT_REGION: "as-east-2"
+  AWS_DEFAULT_REGION: "us-east-2"
 
 jobs:
   build:
