@@ -66,6 +66,13 @@ jobs:
     - name: Date and Time
       run: echo "::set-output name=current_date_time::$(date +"%d-%m-%Y-%H-%I-%M-%S")"
       id : date
+    - name: Copy aab files to a directory
+      run: |
+         mkdir -p aab-files/bundle aab-files/release
+         
+         cp ${{ github.workspace }}/app/build/outputs/bundle/release/app-debug.apk ${{ github.workspace }}/apk-files/bundle/app-release.aab 
+         mv ${{ github.workspace }}/aab-files/bundle/app-release.aab ${{ github.workspace }}/aab-files/bundle/app-release-${{ steps.date.outputs.current_date_time }}.aab
+        
 
     - name: Copy APK files to a directory
       run: |
