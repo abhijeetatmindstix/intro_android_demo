@@ -13,6 +13,7 @@ on:
 
 env:
   AWS_DEFAULT_REGION: "us-east-2"
+
 jobs:
   build:
     runs-on:
@@ -66,25 +67,32 @@ jobs:
       run: echo "::set-output name=current_date_time::$(date +"%d-%m-%Y-%H-%I-%M-%S")"
       id : date
 
-    - name: Copy APK and AAB files to a directory
+    - name: Copy APK files to a directory
       run: |
-        mkdir -p apk-files/debug apk-files/debug aab-files/release
+        mkdir -p apk-files/debug apk-files/debug
      
         cp ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk ${{ github.workspace }}/apk-files/debug/
         mv ${{ github.workspace }}/apk-files/debug/*.apk ${{ github.workspace }}/apk-files/debug/app-debug-${{ steps.date.outputs.current_date_time }}.apk
      
         cp ${{ github.workspace }}/app/build/outputs/apk/release/*.apk ${{ github.workspace }}/apk-files/release/
         mv ${{ github.workspace }}/apk-files/release/*.apk ${{ github.workspace }}/apk-files/release/app-release-${{ steps.date.outputs.current_date_time }}.apk
-        
-        cp ${{ github.workspace }}/app/build/outputs/bundle/release/*.aab ${{ github.workspace }}/aab-files/release/
-        mv ${{ github.workspace }}/aab-files/release/*.aab ${{ github.workspace }}/aab-files/release/app-release-${{ steps.date.outputs.current_date_time }}.aab
 
       
-    - name: Upload apk and aab files Directory
-      uses: actions/upload-artifact@v3
+    - name: Copy AAB files to a directory
+      run: |
+        mkdir -p aab-files/release
+        cp ${{ github.workspace }}/app/build/outputs/bundle/release/*.aab ${{ github.workspace }}/aab-files/release/
+        mv ${{ github.workspace }}/aab-files/release/*.aab ${{ github.workspace }}/aab-files/release/app-release-${{ steps.date.outputs.current_date_time }}.aab
+        
+    - name: Upload apk-files Directory
+      uses: actions/upload-artifact@v2
       with:
-        name: artifact-directory
-        path: |
-          ${{ github.workspace }}/apk-files/
-          ${{ github.workspace }}/aab-files/
+        name: apk-files-artifactory
+        path: ${{ github.workspace }}/apk-files/
         if-no-files-found: ignore
+        
+    - name: Upload aab-files Directory
+      uses: actions/upload-artifact@v2
+      with:
+        name: aab-files-artifactory
+        path: ${{ github.workspace }}/aab-files/
