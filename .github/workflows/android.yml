@@ -70,7 +70,7 @@ jobs:
       run: |
          mkdir -p aab-files/bundle aab-files/release
          
-         cp ${{ github.workspace }}/app/build/outputs/bundle/release/app-debug.apk ${{ github.workspace }}/apk-files/bundle/app-release.aab 
+         cp ${{ github.workspace }}/app/build/outputs/bundle/release/app-release.aab ${{ github.workspace }}/apk-files/bundle/app-release.aab 
          mv ${{ github.workspace }}/aab-files/bundle/app-release.aab ${{ github.workspace }}/aab-files/bundle/app-release-${{ steps.date.outputs.current_date_time }}.aab
         
 
