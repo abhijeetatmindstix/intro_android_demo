@@ -69,7 +69,7 @@ jobs:
 
     - name: Copy APK files to a directory
       run: |
-        mkdir -p apk-files/debug apk-files/release
+        mkdir -p apk-files/debug apk-files/debug
      
         cp ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk ${{ github.workspace }}/apk-files/debug/
         mv ${{ github.workspace }}/apk-files/debug/*.apk ${{ github.workspace }}/apk-files/debug/app-debug-${{ steps.date.outputs.current_date_time }}.apk
