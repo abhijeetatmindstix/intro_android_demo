@@ -99,6 +99,15 @@ jobs:
     steps:
     - name : Check out Git Repository
       uses: actions/checkout@v2
+
+    - name : Download aab-files Artifactory
+      uses: actions/download-artifact@v3
+      with:
+        name: aab-files-artifactory
+        path: ${{ github.workspace }}/aab-files/
+    - name: Display structure of downloaded files of Artifact 
+      run: ls -R
+      working-directory: ${{ github.workspace }}/aab-files/      
       
     - name : Download apk-files Artifactory
       uses: actions/download-artifact@v3
