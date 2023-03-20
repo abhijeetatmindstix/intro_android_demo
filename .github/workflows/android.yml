@@ -81,7 +81,7 @@ jobs:
         if-no-files-found: ignore 
 
     - name: Upload AAB files to S3
-        run:|
+      run: |
         aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
       env:
         AWS_DEFAULT_REGION: us-east-1
