@@ -86,7 +86,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y python3-pip
         pip3 install awscli --upgrade --user
-
     - name: Configure AWS credentials
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -95,6 +94,12 @@ jobs:
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ env.AWS_DEFAULT_REGION }}        
+    - name: Upload AAB files to S3
+      run: |
+        aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
+      env:
+        AWS_DEFAULT_REGION: us-east-1
+           
 
     - name: Copy APK files to a directory
       run: |
@@ -112,52 +117,40 @@ jobs:
         name: apk-files-artifactory
         path: ${{ github.workspace }}/apk-files/
         if-no-files-found: ignore
-      
 
-  upload artifacts:
-    runs-on: ubuntu-latest
-    needs: build
-      
-   steps:
-     - name : Check out Git Repository
-      uses: actions/checkout@v2
-
-     - name : Download aab-files Artifactory
-      uses: actions/download-artifact@v3
-      with:
-        name: aab-files-artifactory
-        path: ${{ github.workspace }}/aab-files/
-     - name: Display structure of downloaded files of Artifact 
-      run: ls -R
-      working-directory: ${{ github.workspace }}/aab-files/      
-      
-     - name : Download apk-files Artifactory
-      uses: actions/download-artifact@v3
-      with:
-        name: apk-files-artifactory
-        path: ${{ github.workspace }}/apk-files/
-     - name: Display structure of downloaded files of Artifact 
-      run: ls -R
-      working-directory: ${{ github.workspace }}/apk-files/
-      
-     - name: Public IP of Github Hosted Runner
-      id: ip
-      uses: haythem/public-ip@v1.3
-
-  deploy to s3:
-    runs-on: ubuntu-latest
-    needs: upload artifacts 
-   
-    steps:     
-
-    - name: Upload AAB files to S3
-      run: |
-        aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
-      env:
-        AWS_DEFAULT_REGION: us-east-1
-
-    - name: Upload APK files to S3
+      - name: Upload APK files to S3
       run: |
         aws s3 cp --recursive ${{ github.workspace }}/apk-files s3://github-actions-artifact-bucket-123456789/apk-files
       env:
         AWS_DEFAULT_REGION: us-east-1       
+      
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+      
+    steps:
+    - name : Check out Git Repository
+      uses: actions/checkout@v2
+
+    - name : Download aab-files Artifactory
+      uses: actions/download-artifact@v3
+      with:
+        name: aab-files-artifactory
+        path: ${{ github.workspace }}/aab-files/
+    - name: Display structure of downloaded files of Artifact 
+      run: ls -R
+      working-directory: ${{ github.workspace }}/aab-files/      
+      
+    - name : Download apk-files Artifactory
+      uses: actions/download-artifact@v3
+      with:
+        name: apk-files-artifactory
+        path: ${{ github.workspace }}/apk-files/
+    - name: Display structure of downloaded files of Artifact 
+      run: ls -R
+      working-directory: ${{ github.workspace }}/apk-files/
+      
+    - name: Public IP of Github Hosted Runner
+      id: ip
+      uses: haythem/public-ip@v1.3
