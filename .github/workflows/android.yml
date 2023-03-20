@@ -96,13 +96,6 @@ jobs:
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ env.AWS_DEFAULT_REGION }}        
 
-    - name: Upload AAB files to S3
-      run: |
-        aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
-      env:
-        AWS_DEFAULT_REGION: us-east-1
-           
-
     - name: Copy APK files to a directory
       run: |
          mkdir -p apk-files/debug apk-files/release
@@ -121,7 +114,7 @@ jobs:
         if-no-files-found: ignore
       
 
-  deploy:
+  upload artifacts:
     runs-on: ubuntu-latest
     needs: build
       
@@ -151,33 +144,20 @@ jobs:
       id: ip
       uses: haythem/public-ip@v1.3
 
+    deploy to s3:
+     runs-on: ubuntu-latest
+     needs: upload artifacts 
+   
+     steps:     
 
-  
-  # deploy-s3:
-  #   runs-on: ubuntu-latest
-  #   needs: deploy
-      
-  #   steps:
-  #   - name: Install AWS CLI
-  #     run: |
-  #       sudo apt-get update
-  #       sudo apt-get install -y python3-pip
-  #       pip3 install awscli --upgrade --user
+     - name: Upload AAB files to S3
+       run: |
+        aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
+       env:
+        AWS_DEFAULT_REGION: us-east-1
 
-  #   - name: Configure AWS credentials
-  #     env:
-  #       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #     run: |
-  #       aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #       aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #       aws configure set default.region ${{ env.AWS_DEFAULT_REGION }}
-
-  #   - name: Upload aab-files to S3
-  #     run: |
-  #       aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
-        
-  #   - name: Upload apk-files to S3
-  #     run: |
-  #       aws s3 cp --recursive ${{ github.workspace }}/apk-files s3://github-actions-artifact-bucket-123456789/apk-files  
- 
+     - name: Upload APK files to S3
+       run: |
+        aws s3 cp --recursive ${{ github.workspace }}/apk-files s3://github-actions-artifact-bucket-123456789/apk-files
+       env:
+        AWS_DEFAULT_REGION: us-east-1       
