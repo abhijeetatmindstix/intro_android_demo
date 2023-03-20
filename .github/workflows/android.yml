@@ -144,7 +144,7 @@ jobs:
       id: ip
       uses: haythem/public-ip@v1.3
 
- deploy to s3:
+  deploy to s3:
     runs-on: ubuntu-latest
     needs: upload artifacts 
    
