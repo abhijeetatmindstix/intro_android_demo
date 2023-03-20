@@ -80,10 +80,7 @@ jobs:
         path: ${{ github.workspace }}/aab-files/
         if-no-files-found: ignore 
 
-  aws-creds-config:
-    runs-on: ubuntu-latest
-      
-    steps:
+
     - name: Install AWS CLI
       run: |
         sudo apt-get update
