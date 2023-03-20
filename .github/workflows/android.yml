@@ -144,20 +144,21 @@ jobs:
       id: ip
       uses: haythem/public-ip@v1.3
 
-    deploy to s3:
-     runs-on: ubuntu-latest
-     needs: upload artifacts 
-   
-     steps:     
 
-     - name: Upload AAB files to S3
-       run: |
+  deploy to s3:
+    runs-on: ubuntu-latest
+    needs: upload artifacts 
+   
+    steps:     
+
+    - name: Upload AAB files to S3
+      run: |
         aws s3 cp --recursive ${{ github.workspace }}/aab-files s3://github-actions-artifact-bucket-123456789/aab-files
-       env:
+      env:
         AWS_DEFAULT_REGION: us-east-1
 
-     - name: Upload APK files to S3
-       run: |
+      - name: Upload APK files to S3
+      run: |
         aws s3 cp --recursive ${{ github.workspace }}/apk-files s3://github-actions-artifact-bucket-123456789/apk-files
-       env:
+      env:
         AWS_DEFAULT_REGION: us-east-1       
