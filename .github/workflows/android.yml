@@ -118,7 +118,7 @@ jobs:
         path: ${{ github.workspace }}/apk-files/
         if-no-files-found: ignore
 
-      - name: Upload APK files to S3
+    - name: Upload APK files to S3
       run: |
         aws s3 cp --recursive ${{ github.workspace }}/apk-files s3://github-actions-artifact-bucket-123456789/apk-files
       env:
